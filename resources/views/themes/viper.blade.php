@@ -194,7 +194,7 @@
                                             />
                                             Profile Info
                                         </x-base.menu.item>
-                                        <x-base.menu.item href="{{ route('login') }}">
+                                        <x-base.menu.item href="{{ route('logout') }}">
                                             <x-base.lucide
                                                 class="w-4 h-4 mr-2"
                                                 icon="Power"

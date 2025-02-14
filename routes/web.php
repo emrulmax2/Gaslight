@@ -1,13 +1,30 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ThemeController;
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\loggedin;
 
 Route::get('theme-switcher/{activeTheme}', [ThemeController::class, 'switch'])->name('theme-switcher');
 
+
+Route::controller(AuthController::class)->middleware(loggedin::class)->group(function() {
+    Route::get('login', 'loginView')->name('login');
+    
+    Route::post('login', 'login')->name('login.check');
+});
+
+Route::middleware(Authenticate::class)->group(function() {
+    Route::controller(PageController::class)->group(function () {
+        Route::get('/', 'dashboardOverview1')->name('company.dashboard');
+    });
+    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+});
+
 Route::controller(PageController::class)->group(function () {
-    Route::get('/', 'dashboardOverview1')->name('dashboard-overview-1');
+    Route::get('dashboard-overview-1', 'dashboardOverview1')->name('dashboard-overview-1');
     Route::get('dashboard-overview-2', 'dashboardOverview2')->name('dashboard-overview-2');
     Route::get('dashboard-overview-3', 'dashboardOverview3')->name('dashboard-overview-3');
     Route::get('dashboard-overview-4', 'dashboardOverview4')->name('dashboard-overview-4');
@@ -78,6 +95,6 @@ Route::controller(PageController::class)->group(function () {
     Route::get('slider', 'slider')->name('slider');
     Route::get('image-zoom', 'imageZoom')->name('image-zoom');
     Route::get('landing-page', 'landingPage')->name('landing-page');
-    Route::get('login', 'login')->name('login');
+    //Route::get('login', 'login')->name('login');
     Route::get('register', 'register')->name('register');
 });
