@@ -17,9 +17,9 @@ class Authenticate
     {
         if (!is_null(request()->user())) {
             return $next($request);
-        }else if (!is_null(Auth::guard('client')->user())) {
+        // }else if (!is_null(Auth::guard('client')->user())) {
             
-            return redirect()->route('client.login');
+        //     return redirect()->route('client.login');
 
         }  else {
             return redirect('login');

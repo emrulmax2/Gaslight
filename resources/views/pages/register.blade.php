@@ -1,7 +1,9 @@
 @extends('../themes/base')
 
 @section('head')
-    <title>Tailwise - Admin Dashboard Template</title>
+    <title>Gas Certificate - New Registration </title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 @endsection
 
 @section('content')
@@ -11,7 +13,7 @@
             'relative z-50 h-full col-span-12 p-7 sm:p-14 bg-white rounded-2xl lg:bg-transparent lg:pr-10 lg:col-span-5 xl:pr-24 2xl:col-span-4 lg:p-0',
             "before:content-[''] before:absolute before:inset-0 before:-mb-3.5 before:bg-white/40 before:rounded-2xl before:mx-5",
         ])>
-            <div class="relative z-10 flex h-full w-full flex-col justify-center py-2 lg:py-32">
+            <div class="relative z-10 flex h-full w-full flex-col justify-center py-2 lg:py-24">
                 <div class="flex h-[55px] w-[55px] items-center justify-center rounded-[0.8rem] border border-primary/30">
                     <div
                         class="relative flex h-[50px] w-[50px] items-center justify-center rounded-[0.6rem] bg-white bg-gradient-to-b from-theme-1/90 to-theme-2/90">
@@ -28,49 +30,67 @@
                         Already have an account?
                         <a
                             class="font-medium text-primary"
-                            href=""
+                            href="{{ route('login') }}"
                         >
                             Sign In
                         </a>
                     </div>
+                    
                     <div class="mt-6">
-                        <x-base.form-label>First Name*</x-base.form-label>
+                        <form
+                        id="register-form"
+                        class="mt-6"
+                        method="POST">
+                        <x-base.form-label>Full Name*</x-base.form-label>
                         <x-base.form-input
                             class="block rounded-[0.6rem] border-slate-300/80 px-4 py-3.5"
                             type="text"
-                            placeholder="{{ explode(' ', $users[0]['name'])[0] }}"
+                            placeholder="David Peterson"
+                            name="name"
                         />
-                        <x-base.form-label class="mt-5">Last Name*</x-base.form-label>
-                        <x-base.form-input
-                            class="block rounded-[0.6rem] border-slate-300/80 px-4 py-3.5"
-                            type="text"
-                            placeholder="{{ explode(' ', $users[0]['name'])[1] }}"
-                        />
+                        
+                        <div id="error-name" class="register__input-error text-danger mt-2 dark:text-orange-400"></div>
                         <x-base.form-label class="mt-5">Email*</x-base.form-label>
                         <x-base.form-input
                             class="block rounded-[0.6rem] border-slate-300/80 px-4 py-3.5"
                             type="text"
                             placeholder="{{ $users[0]['email'] }}"
+                            name="email"
                         />
+                        
+                        <div id="error-email" class="register__input-error text-danger mt-2 dark:text-orange-400"></div>
+                        <x-base.form-label class="mt-5">Role*</x-base.form-label>
+                        <x-base.tom-select
+                            class="block rounded-[1rem] border-slate-300/80 px-2 py-1.5"
+                            data-placeholder="Please Select your Role"
+                            name="role"
+                        >
+                            <option value="">Please Select</option>
+                            <option value="admin">Admin</option>
+                            <option value="engineer">Engineer</option>
+                        </x-base.tom-select>
+                        
+                        <div id="error-role" class="register__input-error text-danger mt-2 dark:text-orange-400"></div>
                         <x-base.form-label class="mt-5">Password*</x-base.form-label>
+                        <div class="relative">
                         <x-base.form-input
                             class="block rounded-[0.6rem] border-slate-300/80 px-4 py-3.5"
                             type="password"
                             placeholder="************"
+                            name="password"
+                            id="password"
                         />
-                        <div class="mt-3.5 grid h-1.5 w-full grid-cols-12 gap-4">
-                            <div
-                                class="active col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30 [&.active]:border-theme-1/20 [&.active]:bg-theme-1/30">
-                            </div>
-                            <div
-                                class="active col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30 [&.active]:border-theme-1/20 [&.active]:bg-theme-1/30">
-                            </div>
-                            <div
-                                class="active col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30 [&.active]:border-theme-1/20 [&.active]:bg-theme-1/30">
-                            </div>
-                            <div
-                                class="col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30 [&.active]:border-theme-1/20 [&.active]:bg-theme-1/30">
-                            </div>
+                        <span id="togglePasswordShow" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                            <i id="togglePasswordIcon" data-lucide="eye-off"></i>
+                        </span>
+                        </div>
+                        
+                        <div id="error-password" class="register__input-error text-danger mt-2 dark:text-orange-400"></div>
+                        <div id="password-strength" class="mt-3.5 grid h-1.5 w-full grid-cols-12 gap-4">
+                            <div class="col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30"></div>
+                            <div class="col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30"></div>
+                            <div class="col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30"></div>
+                            <div class="col-span-3 h-full rounded border border-slate-400/20 bg-slate-400/30"></div>
                         </div>
                         <a
                             class="mt-3 block text-xs text-slate-500/80 sm:text-sm"
@@ -79,23 +99,35 @@
                             What is a secure password?
                         </a>
                         <x-base.form-label class="mt-5">Password Confirmation*</x-base.form-label>
-                        <x-base.form-input
-                            class="block rounded-[0.6rem] border-slate-300/80 px-4 py-3.5"
-                            type="password"
-                            placeholder="************"
-                        />
+                        <div class="relative">
+                            <x-base.form-input
+                                class="block rounded-[0.6rem] border-slate-300/80 px-4 py-3.5"
+                                type="password"
+                                placeholder="************"
+                                name="password_confirmation"
+                                id="password_confirmation"
+                            />
+                            <span id="toggleConfirmPasswordShow" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" >
+                                <i id="togglePasswordConfirmationIcon" data-lucide="eye-off"></i>
+                            </span>
+                        </div>
                         <div class="mt-5 flex items-center text-xs text-slate-500 sm:text-sm">
                             <x-base.form-check.input
                                 class="mr-2 border"
-                                id="remember-me"
+                                id="terms"
                                 type="checkbox"
+                                name="terms"
                             />
                             <label
                                 class="cursor-pointer select-none"
-                                for="remember-me"
+                                for="terms"
                             >
-                                I agree to the Envato
+                                I agree to the 
                             </label>
+                            <a
+                                class="ml-1 mr-1 text-primary dark:text-slate-200"
+                                href=""
+                            >Term & Conditions</a> and
                             <a
                                 class="ml-1 text-primary dark:text-slate-200"
                                 href=""
@@ -103,24 +135,51 @@
                                 Privacy Policy
                             </a>
                             .
+                            
                         </div>
+                        <div id="error-terms" class="register__input-error text-danger mt-2 dark:text-orange-400"></div>
+                        {{-- <div class="g-recaptcha mt-5 text-center xl:mt-8 xl:text-left" data-sitekey="6Lcm-NkqAAAAAKHwPaoF1krwOMOtfVgB0V3N2nuD"></div> --}}
+                        
+                    </form>
+                    <x-base.alert
+                        id="register-success"
+                        class="my-7 flex items-center rounded-[0.6rem] border-primary/20 bg-primary/5 px-4 py-3 leading-[1.7] hidden"
+                        variant="outline-primary"
+                    >
+                        <div class="">
+                            <x-base.lucide
+                                class="mr-2 h-7 w-7 fill-primary/10 stroke-[0.8]"
+                                icon="Lightbulb"
+                            />
+                        </div>
+                        <div class="ml-1 mr-8">
+                            Register <span class="font-medium">Sucessful</span>! check the
+                            <span id="email" class="font-medium">given email</span> for the verification link.
+                        </div>
+                        <x-base.alert.dismiss-button class="btn-close text-primary">
+                            <x-base.lucide
+                                class="w-5 h-5"
+                                icon="X"
+                            />
+                        </x-base.alert.dismiss-button>
+                    </x-base.alert>
+
                         <div class="mt-5 text-center xl:mt-8 xl:text-left">
                             <x-base.button
+                                id="btn-register"
                                 class="w-full bg-gradient-to-r from-theme-1/70 to-theme-2/70 py-3.5 xl:mr-3"
                                 variant="primary"
                                 rounded
                             >
-                                Sign In
+                                <span class="register-text">Register Now </span> <x-base.loading-icon
+                                class="h-6 w-6 hidden register__loading"
+                                icon="oval" color="#fff"
+                            />
                             </x-base.button>
-                            <x-base.button
-                                class="mt-3 w-full bg-white/70 py-3.5"
-                                variant="outline-secondary"
-                                rounded
-                            >
-                                Sign Up
-                            </x-base.button>
+                            
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -194,4 +253,118 @@
         </div>
     </div>
     {{-- <ThemeSwitcher /> --}}
+
 @endsection
+@pushOnce('vendors')
+    @vite('resources/js/utils/helper.js')
+    @vite('resources/js/vendors/axios.js')
+    @vite('resources/js/vendors/toastify.js')
+@endPushOnce
+
+@pushOnce('scripts')
+    <script type="module">
+        
+        (function () {
+            document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+        });
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.setAttribute('data-lucide', 'eye');
+            } else {
+                passwordInput.type = 'password';
+                icon.setAttribute('data-lucide', 'eye-off');
+            }
+            lucide.createIcons();
+        }
+
+        function evaluatePasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBars = document.querySelectorAll('#password-strength > div');
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            strengthBars.forEach((bar, index) => {
+                if (index < strength) {
+                    bar.classList.add('bg-theme-1/30');
+                    bar.classList.remove('bg-slate-400/30');
+                } else {
+                    bar.classList.add('bg-slate-400/30');
+                    bar.classList.remove('bg-theme-1/30');
+                }
+            });
+        }
+            async function register() {
+                // Reset state
+                $('#register-form').find('.register__input').removeClass('border-danger')
+                $('#register-form').find('.register__input-error').html('')
+
+                // Create FormData object
+                let formData = new FormData(document.getElementById('register-form'));
+
+                $('.register-text').addClass('hidden');
+                $('#btn-register .register__loading').removeClass('hidden');
+                // Loading state
+                await helper.delay(1500)
+
+                axios.post(route('register'), formData)
+                    .then(res => {
+                        // Show Toastify message
+                        $("#register-success").removeClass('hidden');
+
+                        // Redirect to login after a short delay
+                        setTimeout(() => {
+                            location.href = route('login');
+                        }, 3000);
+                    })
+                    .catch(err => {
+                        $('#btn-register .register__loading').addClass('hidden');
+                        $('.register-text').removeClass('hidden');
+                        if (err.response && err.response.data.errors) {
+                            for (const [key, val] of Object.entries(err.response.data.errors)) {
+                                $(`#${key}`).addClass('border-danger')
+                                $(`#error-${key}`).html(val)
+                            }
+                        } else if (err.response && err.response.data.error) {
+                            Toastify({
+                                text: err.response.data.error,
+                                duration: 3000,
+                                close: true,
+                                gravity: "top", // `top` or `bottom`
+                                position: "right", // `left`, `center` or `right`
+                                backgroundColor: "#FF0000",
+                            }).showToast();
+                        }
+                    });
+            }
+
+            $('#register-form').on('keyup', function(e) {
+                if (e.keyCode === 13) {
+                    register()
+                }
+            })
+
+            $('#btn-register').on('click', function() {
+                register()
+            })
+
+            $('#password').on('input', function() {
+                evaluatePasswordStrength()
+            })
+            $('#togglePasswordShow').on('click', function() {
+                togglePasswordVisibility('password', 'togglePasswordIcon')
+            })
+            $('#toggleConfirmPasswordShow').on('click', function() {
+                togglePasswordVisibility('password_confirmation', 'togglePasswordConfirmationIcon')
+            })
+        })();
+    </script>
+@endPushOnce

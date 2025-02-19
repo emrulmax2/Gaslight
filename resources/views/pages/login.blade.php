@@ -28,7 +28,7 @@
                         Don't have an account?
                         <a
                             class="font-medium text-primary"
-                            href=""
+                            href="{{ route('register') }}"
                         >
                             Sign Up
                         </a>
@@ -100,13 +100,13 @@
                                 icon="oval" color="#fff"
                             />
                             </x-base.button>
-                            <x-base.button
-                                class="mt-3 w-full bg-white/70 py-3.5"
+                            <a href="{{ route('register') }}"
+                                class="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&:hover:not(:disabled)]:bg-secondary/20 [&:hover:not(:disabled)]:dark:bg-darkmode-100/10 rounded-full mt-3 w-full bg-white/70 py-3.5"
                                 variant="outline-secondary"
                                 rounded
                             >
                                 Sign Up
-                            </x-base.button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -182,7 +182,7 @@
         </div>
     </div>
     {{-- <ThemeSwitcher /> --}}
-    @if ($errors->any())
+    @if ($errors->any() || session('success'))
         <!-- BEGIN: Notification Content -->
         <x-base.notification
             class="flex"
@@ -193,6 +193,7 @@
                 icon="CheckCircle"
             />
             <div class="ml-4 mr-4">
+                @if($errors->any())
                 <div class="font-medium">Error!!</div>
                 <div class="mt-1 text-slate-500">
                     <ul class="max-w-md space-y-1 text-gray-500 list-none list-inside dark:text-gray-400">
@@ -201,6 +202,12 @@
                     @endforeach
                     </ul>
                 </div>
+                @else
+                <div class="font-medium">Success!!</div>
+                <div class="mt-1 text-slate-500">
+                    {{ session('success') }}
+                </div>  
+                @endif
             </div>
         </x-base.notification>
         <!-- END: Notification Content -->
